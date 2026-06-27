@@ -47,7 +47,7 @@ class DocumentProcessor:
         return all_chunks
 
 
-# בדיקה פשוטה לחלק הזה בקוד
+# בדיקה פשוטה לחלק הנוכחי
 if __name__ == "__main__":
     # 1. Initialize our processor
     processor = DocumentProcessor()
