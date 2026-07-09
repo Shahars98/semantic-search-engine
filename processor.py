@@ -6,9 +6,8 @@ from typing import List, Dict, Any
 class DocumentProcessor:
     def __init__(self, data_dir: str = "data"):
         self.data_dir = data_dir
-        # Ensure the data directory exists locally
-        if not os.path.exists(self.data_dir):
-            os.makedirs(self.data_dir)
+        if not os.path.isdir(self.data_dir):
+            raise FileNotFoundError(f"Data directory not found: {self.data_dir}")
 
     def load_and_chunk_file(self, filename: str) -> List[Dict[str, Any]]:
         """
@@ -27,19 +26,21 @@ class DocumentProcessor:
             # A simple sentence-splitting regex (looks for ., !, or ? followed by a space)
             sentences = re.split(r'(?<=[.!?])\s+', text)
 
-            for index, sentence in enumerate(sentences):
+            chunk_index = 0
+            for sentence in sentences:
                 if len(sentence.strip()) > 10:  # Skip empty or meaningless short fragments
                     chunks.append({
                         "source": filename,
-                        "chunk_index": index,
+                        "chunk_index": chunk_index,
                         "text": sentence.strip()
                     })
+                    chunk_index += 1
         return chunks
 
     def process_all_files(self) -> List[Dict[str, Any]]:
         """Scans the data directory and processes every text file."""
         all_chunks = []
-        for filename in os.listdir(self.data_dir):
+        for filename in sorted(os.listdir(self.data_dir)):
             if filename.endswith(".txt"):
                 print(f"Processing: {filename}")
                 file_chunks = self.load_and_chunk_file(filename)
